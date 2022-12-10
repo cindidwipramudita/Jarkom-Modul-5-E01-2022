@@ -172,11 +172,12 @@ route add -net 10.22.7.136 netmask 255.255.255.248 gw 10.22.7.150
 route add -net 0.0.0.0 netmask 0.0.0.0 gw 10.22.7.145
 ```
 [ Ostania ]
-
 ```
 route add -net 0.0.0.0 netmask 0.0.0.0 gw 10.22.7.149
 ```
-[ Eden adalah DNS Server ] Pada File > /etc/bind/named.conf.options
+[ Eden adalah DNS Server ] 
+
+Pada File > /etc/bind/named.conf.options
 ```
 apt update
 apt install bind9 -y
@@ -191,16 +192,21 @@ options {
         listen-on-v6 { any; };
 };' > /etc/bind/named.conf.options
 ```
-Kemudian lakukan Restart Dengan `service bind9 restart`      
-[  WISE adalah DHCP Server  ]        
+Kemudian lakukan Restart Dengan `service bind9 restart`  
+
+[  WISE adalah DHCP Server  ]     
+
 Pada File  > /etc/default/isc-dhcp-server     
+
 ```
 apt update
 apt install isc-dhcp-server -y
 echo '
 INTERFACES="eth0" ' > /etc/default/isc-dhcp-server
 ```
+
 Pada File > /etc/dhcp/dhcpd.conf
+
 ```
 echo '
 ddns-update-style none;
