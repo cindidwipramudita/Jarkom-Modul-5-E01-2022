@@ -36,6 +36,11 @@ Berikut adalah Perhitungannya
 
 ![image](https://user-images.githubusercontent.com/87058985/206841604-87d90ab8-9e55-4b65-8f35-55a381eb82e6.png)
 
+Menggunakan pembagian IP dengan teknik VLSM. Berikut merupakan tabel hasil pembagian IP
+
+![image](https://user-images.githubusercontent.com/87058985/206857533-1bee877f-9753-46f3-9d78-30aedc113ef9.png)
+
+
 ### Konfigurasi Network setiap node
 [ Westalis ]
 ```
