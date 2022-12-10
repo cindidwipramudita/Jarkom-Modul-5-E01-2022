@@ -322,41 +322,66 @@ Reject bila terdapat PING ICMP Lebih dari 2
 ```
 iptables -A INPUT -p icmp -m connlimit --connlimit-above 2 --connlimit-mask 0 -j DROP
 ```
+[ Forger ]
+
+![image](https://user-images.githubusercontent.com/87058985/206855330-9e421e17-cc26-4e73-9185-6027750f833e.png)
+
+[ Briar ]
+
+![image](https://user-images.githubusercontent.com/87058985/206855368-01f4bc12-369c-4223-89d7-14e02cf79014.png)
+
+[ Blackbell ]
+
+![image](https://user-images.githubusercontent.com/87058985/206855387-add97edd-0ad2-409b-b530-2915f3e98ca3.png)
+
 
 ## Soal Nomor 4
 Akses menuju Web Server hanya diperbolehkan disaat jam kerja yaitu Senin sampai Jumat pada pukul 07.00 - 16.00.
 
 ### Jawaban Nomor 4    
 ```
-iptables -A INPUT -s 10.22.7.0/25 -m time --weekdays Sat,Sun -j REJECT
-iptables -A INPUT -s 10.22.7.0/25 -m time --timestart 00:00 --timestop 06:59 --weekdays Mon,Tue,Wed,Thu,Fri -j REJECT
-iptables -A INPUT -s 10.22.7.0/25 -m time --timestart 16:01 --timestop 23:59 --weekdays Mon,Tue,Wed,Thu,Fri -j REJECT
+iptables -A INPUT -m time --weekdays Sat,Sun -j REJECT
+iptables -A INPUT -m time --timestart 00:00 --timestop 06:59 --weekdays Mon,Tue,Wed,Thu,Fri -j REJECT
+iptables -A INPUT -m time --timestart 16:01 --timestop 23:59 --weekdays Mon,Tue,Wed,Thu,Fri -j REJECT
 
 iptables -A INPUT -s 10.22.0.0/22 -m time --weekdays Sat,Sun -j REJECT
 iptables -A INPUT -s 10.22.0.0/22 -m time --timestart 00:00 --timestop 06:59 --weekdays Mon,Tue,Wed,Thu,Fri -j REJECT
 iptables -A INPUT -s 10.22.0.0/22 -m time --timestart 16:01 --timestop 23:59 --weekdays Mon,Tue,Wed,Thu,Fri -j REJECT
-
 ```
+Testing Hari Sabtu 10 Desember 2022 pukul 10.00
+
+![image](https://user-images.githubusercontent.com/87058985/206855421-afc061ad-9b75-4da8-9e3d-3ea07521242e.png)
+
+Hari Jumat 9 Desember 2022 Pukul 09.00
+
+![image](https://user-images.githubusercontent.com/87058985/206855439-4acd0879-5f11-41dc-8669-05b3756d1239.png)
+
+
 ## Soal Nomor 5
 Karena kita memiliki 2 Web Server, Loid ingin Ostania diatur sehingga setiap request dari client yang mengakses Garden dengan port 80 akan didistribusikan secara bergantian pada SSS dan Garden secara berurutan dan request dari client yang mengakses SSS dengan port 443 akan didistribusikan secara bergantian pada Garden dan SSS secara berurutan.
 
 ### Jawaban Nomor 5
-Akses dari subnet Elena dan Fukuro
+Pertama, konfigurasi untuk masing-masing node dengan port untuk request masing-masing node adalah 80 dan 443 dengan menggunakan --dport karena saat terjadi request akan terdistribus antara SSS & Garden. Untuk mendistribusikan maka menggunakan --every 2 dan diarahkan pada node sasaran distribusi dengan --to-destination.
+
+[ Garden ]
 ```
-iptables -A INPUT -s 10.45.4.0/23 -m time --timestart 07:00 --timestop 15:00 -j REJECT #Elena
-iptables -A INPUT -s 10.45.6.0/24 -m time --timestart 07:00 --timestop 15:00 -j REJECT #Fukuro
+iptables -A PREROUTING -t nat -p tcp --dport 80 -d 10.22.7.138 -m statistic --mode nth --every 2 --packet 0 -j DNAT --to-destination 10.22.7.138:80
+iptables -A PREROUTING -t nat -p tcp --dport 80 -d 10.22.7.138 -j DNAT --to-destination 10.22.7.139:80]
+[SSS}
+iptables -A PREROUTING -t nat -p tcp --dport 443 -d 10.22.7.139 -m statistic --mode nth --every 2 --packet 0 -j DNAT --to-destination 10.22.7.139:443
+iptables -A PREROUTING -t nat -p tcp --dport 443 -d 10.22.7.139 -j DNAT --to-destination 10.22.7.138:443
 ```
 
 ## Soal Nomor 6
 Karena Loid ingin tau paket apa saja yang di-drop, maka di setiap node server dan router ditambahkan logging paket yang di-drop dengan standard syslog level.
 
 ### Jawaban Nomor 6
-[ Guanhao ]
 ```
-iptables -A PREROUTING -t nat -p tcp -d 10.45.7.130 -m statistic --mode nth --every 2 --packet 0 -j DNAT --to-destination 10.45.7.138:80
-iptables -A PREROUTING -t nat -p tcp -d 10.45.7.130 -j DNAT --to-destination 10.45.7.139:80
+iptables -N LOGGING
+iptables -A INPUT -j LOGGING
+iptables -A LOGGING -m limit --limit 2/min -j LOG --log-prefix "IPTables-Dropped: " --log-level 4
+iptables -A LOGGING -j DROP
 ```
-
 ## Kendala
 Banyak :v 
 
