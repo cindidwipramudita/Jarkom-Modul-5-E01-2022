@@ -338,7 +338,7 @@ iptables -A INPUT -s 10.22.0.0/22 -m time --timestart 16:01 --timestop 23:59 --w
 
 ```
 ## Soal Nomor 5
-Akses dari subnet Elena dan Fukuro hanya diperbolehkan pada pukul 15.01 hingga pukul 06.59 setiap harinya selain itu di reject
+Karena kita memiliki 2 Web Server, Loid ingin Ostania diatur sehingga setiap request dari client yang mengakses Garden dengan port 80 akan didistribusikan secara bergantian pada SSS dan Garden secara berurutan dan request dari client yang mengakses SSS dengan port 443 akan didistribusikan secara bergantian pada Garden dan SSS secara berurutan.
 
 ### Jawaban Nomor 5
 Akses dari subnet Elena dan Fukuro
@@ -348,7 +348,7 @@ iptables -A INPUT -s 10.45.6.0/24 -m time --timestart 07:00 --timestop 15:00 -j 
 ```
 
 ## Soal Nomor 6
-Karena kita memiliki 2 Web Server, Luffy ingin Guanhao disetting sehingga setiap request dari client yang mengakses DNS Server akan didistribusikan secara bergantian pada Jorge dan Maingate
+Karena Loid ingin tau paket apa saja yang di-drop, maka di setiap node server dan router ditambahkan logging paket yang di-drop dengan standard syslog level.
 
 ### Jawaban Nomor 6
 [ Guanhao ]
